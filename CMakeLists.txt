@@ -18,6 +18,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 endif()
 
+# Set CMAKE_PREFIX_PATH for finding packages
+if(APPLE)
+    list(APPEND CMAKE_PREFIX_PATH
+            "/usr/local/opt/qt@6"
+            "/usr/local/opt/googletest"
+            "/usr/local/Cellar/googletest"
+    )
+endif()
+
 # Find required packages
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(GTest REQUIRED)
@@ -25,6 +34,7 @@ find_package(GTest REQUIRED)
 # Add subdirectories
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(examples)
 
 # Installation rules
 install(TARGETS options_pricer_lib
@@ -37,7 +47,7 @@ install(TARGETS options_pricer_lib
 
 install(DIRECTORY include/pricer
         DESTINATION include
-        FILES_MATCHING PATTERN "*.hpp"
+        FILES_MATCHING PATTERN "*.h"
 )
 
 # Export targets

@@ -1,0 +1,8 @@
+set(__QT_DEPLOY_TARGET_options_pricer_gui_FILE /Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/options_pricer_gui)
+set(__QT_DEPLOY_TARGET_options_pricer_gui_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_options_pricer_lib_FILE /Users/suf/options-pricing-calculator/cmake-build-debug/src/liboptions_pricer_lib.a)
+set(__QT_DEPLOY_TARGET_options_pricer_lib_TYPE STATIC_LIBRARY)
+set(__QT_DEPLOY_TARGET_options_pricer_tests_FILE /Users/suf/options-pricing-calculator/cmake-build-debug/tests/options_pricer_tests)
+set(__QT_DEPLOY_TARGET_options_pricer_tests_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_basic_usage_FILE /Users/suf/options-pricing-calculator/cmake-build-debug/examples/basic_usage)
+set(__QT_DEPLOY_TARGET_basic_usage_TYPE EXECUTABLE)

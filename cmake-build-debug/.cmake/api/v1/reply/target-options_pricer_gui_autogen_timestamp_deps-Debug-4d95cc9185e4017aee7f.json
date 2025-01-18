@@ -1,0 +1,34 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"src/gui/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 0,
+			"id" : "options_pricer_lib::@145eef247bfb46b6828c"
+		}
+	],
+	"id" : "options_pricer_gui_autogen_timestamp_deps::@7675e61a69a6135e3026",
+	"isGeneratorProvided" : true,
+	"name" : "options_pricer_gui_autogen_timestamp_deps",
+	"paths" : 
+	{
+		"build" : "src/gui",
+		"source" : "src/gui"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

@@ -4,6 +4,8 @@ set(SOURCES
         binomial.cpp
         option.cpp
         utils.cpp
+        ../include/pricer/engine.h
+        ../examples/basic_usage.cpp
 )
 
 add_library(options_pricer_lib ${SOURCES})

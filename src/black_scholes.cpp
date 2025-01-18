@@ -9,16 +9,16 @@ namespace pricer {
 
 double BlackScholesPricingEngine::calculate(const Option& option) const {
     // Extract parameters from the option
-    double S = option.getSpot();
-    double K = option.getStrike();
-    double T = option.getExpiry();
-    double r = option.getRate();
-    double sigma = option.getVolatility();
-    double q = option.getDividend();
+    const double S = option.getSpot();
+    const double K = option.getStrike();
+    const double T = option.getExpiry();
+    const double r = option.getRate();
+    const double sigma = option.getVolatility();
+    const double q = option.getDividend();
 
     // Calculate d1 and d2
-    double d1 = calculateD1(S, K, r, q, sigma, T);
-    double d2 = calculateD2(d1, sigma, T);
+    const double d1 = calculateD1(S, K, r, q, sigma, T);
+    const double d2 = calculateD2(d1, sigma, T);
 
     // Calculate option price based on type
     double price = 0.0;
@@ -32,14 +32,14 @@ double BlackScholesPricingEngine::calculate(const Option& option) const {
 }
 
 double BlackScholesPricingEngine::calculateDelta(const Option& option) const {
-    double S = option.getSpot();
-    double K = option.getStrike();
-    double T = option.getExpiry();
-    double r = option.getRate();
-    double sigma = option.getVolatility();
-    double q = option.getDividend();
+    const double S = option.getSpot();
+    const double K = option.getStrike();
+    const double T = option.getExpiry();
+    const double r = option.getRate();
+    const double sigma = option.getVolatility();
+    const double q = option.getDividend();
 
-    double d1 = calculateD1(S, K, r, q, sigma, T);
+    const double d1 = calculateD1(S, K, r, q, sigma, T);
 
     if (option.getType() == OptionType::Call) {
         return exp(-q * T) * normalCDF(d1);
@@ -49,14 +49,14 @@ double BlackScholesPricingEngine::calculateDelta(const Option& option) const {
 }
 
 double BlackScholesPricingEngine::calculateGamma(const Option& option) const {
-    double S = option.getSpot();
-    double K = option.getStrike();
-    double T = option.getExpiry();
-    double r = option.getRate();
-    double sigma = option.getVolatility();
-    double q = option.getDividend();
+    const double S = option.getSpot();
+    const double K = option.getStrike();
+    const double T = option.getExpiry();
+    const double r = option.getRate();
+    const double sigma = option.getVolatility();
+    const double q = option.getDividend();
 
-    double d1 = calculateD1(S, K, r, q, sigma, T);
+    const double d1 = calculateD1(S, K, r, q, sigma, T);
 
     // Gamma is the same for both calls and puts
     return exp(-q * T) * normalPDF(d1) / (S * sigma * sqrt(T));
@@ -88,29 +88,29 @@ double BlackScholesPricingEngine::calculateTheta(const Option& option) const {
 }
 
 double BlackScholesPricingEngine::calculateVega(const Option& option) const {
-    double S = option.getSpot();
-    double K = option.getStrike();
-    double T = option.getExpiry();
-    double r = option.getRate();
-    double sigma = option.getVolatility();
-    double q = option.getDividend();
+    const double S = option.getSpot();
+    const double K = option.getStrike();
+    const double T = option.getExpiry();
+    const double r = option.getRate();
+    const double sigma = option.getVolatility();
+    const double q = option.getDividend();
 
-    double d1 = calculateD1(S, K, r, q, sigma, T);
+    const double d1 = calculateD1(S, K, r, q, sigma, T);
 
     // Vega is the same for both calls and puts
     return S * exp(-q * T) * sqrt(T) * normalPDF(d1);
 }
 
 double BlackScholesPricingEngine::calculateRho(const Option& option) const {
-    double S = option.getSpot();
-    double K = option.getStrike();
-    double T = option.getExpiry();
-    double r = option.getRate();
-    double sigma = option.getVolatility();
-    double q = option.getDividend();
+    const double S = option.getSpot();
+    const double K = option.getStrike();
+    const double T = option.getExpiry();
+    const double r = option.getRate();
+    const double sigma = option.getVolatility();
+    const double q = option.getDividend();
 
-    double d1 = calculateD1(S, K, r, q, sigma, T);
-    double d2 = calculateD2(d1, sigma, T);
+    const double d1 = calculateD1(S, K, r, q, sigma, T);
+    const double d2 = calculateD2(d1, sigma, T);
 
     if (option.getType() == OptionType::Call) {
         return K * T * exp(-r * T) * normalCDF(d2);
@@ -151,8 +151,8 @@ double BlackScholesPricingEngine::normalCDF(double x) {
         x = -x;
     }
 
-    double t = 1.0 / (1.0 + p * x);
-    double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * exp(-x * x / 2.0);
+    const double t = 1.0 / (1.0 + p * x);
+    const double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * exp(-x * x / 2.0);
 
     return 0.5 * (1.0 + sign * y);
 }

@@ -1,0 +1,5 @@
+options_pricer_gui_autogen/timestamp: \
+	/Users/suf/options-pricing-calculator/src/gui/CMakeLists.txt \
+	/Users/suf/options-pricing-calculator/src/gui/main.cpp \
+	/Users/suf/options-pricing-calculator/src/gui/main_window.cpp \
+	/Applications/CLion.app/Contents/bin/cmake/mac/x64/bin/cmake

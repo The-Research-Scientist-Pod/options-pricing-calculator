@@ -6,9 +6,7 @@
 #define OPTION_H
 
 
-#include <string>
 #include <memory>
-#include <stdexcept>
 
 namespace pricer {
 
@@ -65,37 +63,37 @@ public:
      * @return The calculated price
      * @throws std::runtime_error if no pricing engine is set
      */
-    virtual double price() const;
+    [[nodiscard]] virtual double price() const;
 
     /**
      * @brief Calculate the option's delta
      * @return The calculated delta
      */
-    virtual double delta() const;
+    [[nodiscard]] virtual double delta() const;
 
     /**
      * @brief Calculate the option's gamma
      * @return The calculated gamma
      */
-    virtual double gamma() const;
+    [[nodiscard]] virtual double gamma() const;
 
     /**
      * @brief Calculate the option's theta
      * @return The calculated theta
      */
-    virtual double theta() const;
+    [[nodiscard]] virtual double theta() const;
 
     /**
      * @brief Calculate the option's vega
      * @return The calculated vega
      */
-    virtual double vega() const;
+    [[nodiscard]] virtual double vega() const;
 
     /**
      * @brief Calculate the option's rho
      * @return The calculated rho
      */
-    virtual double rho() const;
+    [[nodiscard]] virtual double rho() const;
 
     /**
      * @brief Set the pricing engine for this option
@@ -104,19 +102,21 @@ public:
     void setPricingEngine(std::shared_ptr<PricingEngine> engine);
 
     // Getters
-    OptionType getType() const { return type_; }
-    double getStrike() const { return strike_; }
-    double getExpiry() const { return expiry_; }
-    double getSpot() const { return spot_; }
-    double getRate() const { return rate_; }
-    double getVolatility() const { return volatility_; }
-    double getDividend() const { return dividend_; }
+    [[nodiscard]] OptionType getType() const { return type_; }
+    [[nodiscard]] double getStrike() const { return strike_; }
+    [[nodiscard]] double getExpiry() const { return expiry_; }
+    [[nodiscard]] double getSpot() const { return spot_; }
+    [[nodiscard]] double getRate() const { return rate_; }
+    [[nodiscard]] double getVolatility() const { return volatility_; }
+    [[nodiscard]] double getDividend() const { return dividend_; }
+    [[nodiscard]] const PricingEngine* getEngine() const { return engine_.get(); }
 
     // Setters with validation
     void setSpot(double spot);
     void setRate(double rate);
     void setVolatility(double volatility);
     void setDividend(double dividend);
+    void setExpiry(double expiry);
 
 protected:
     // Option parameters
@@ -136,12 +136,14 @@ protected:
      * @throws std::invalid_argument if parameters are invalid
      */
     void validateParameters() const;
+ void checkEngine() const;
+
 };
 
 /**
  * @brief European option class
  */
-class EuropeanOption : public Option {
+class EuropeanOption final : public Option {
 public:
     using Option::Option;  // Inherit constructors
 };
@@ -149,7 +151,7 @@ public:
 /**
  * @brief American option class
  */
-class AmericanOption : public Option {
+class AmericanOption final : public Option {
 public:
     using Option::Option;  // Inherit constructors
 
@@ -157,7 +159,7 @@ public:
      * @brief Override price calculation for American options
      * @return The calculated price
      */
-    double price() const override;
+    [[nodiscard]] double price() const override;
 };
 
 } // namespace pricer

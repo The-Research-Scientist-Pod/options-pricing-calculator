@@ -1,0 +1,101 @@
+{
+	"BUILD_DIR" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/options_pricer_gui_autogen",
+	"CMAKE_BINARY_DIR" : "/Users/suf/options-pricing-calculator/cmake-build-debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/Users/suf/options-pricing-calculator/src/gui",
+	"CMAKE_EXECUTABLE" : "/Applications/CLion.app/Contents/bin/cmake/mac/x64/bin/cmake",
+	"CMAKE_LIST_FILES" : [ "/Users/suf/options-pricing-calculator/src/gui/CMakeLists.txt" ],
+	"CMAKE_SOURCE_DIR" : "/Users/suf/options-pricing-calculator",
+	"CROSS_CONFIG" : false,
+	"DEP_FILE" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/options_pricer_gui_autogen/deps",
+	"DEP_FILE_RULE_NAME" : "options_pricer_gui_autogen/timestamp",
+	"HEADERS" : 
+	[
+		[
+			"/Users/suf/options-pricing-calculator/src/gui/main_window.h",
+			"mU",
+			"",
+			null
+		]
+	],
+	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
+	"INCLUDE_DIR" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/options_pricer_gui_autogen/include",
+	"MOC_COMPILATION_FILE" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/options_pricer_gui_autogen/mocs_compilation.cpp",
+	"MOC_DEFINITIONS" : [ "QT_CORE_LIB", "QT_GUI_LIB", "QT_WIDGETS_LIB" ],
+	"MOC_DEPEND_FILTERS" : 
+	[
+		[
+			"Q_PLUGIN_METADATA",
+			"[\n][ \t]*Q_PLUGIN_METADATA[ \t]*\\([^\\)]*FILE[ \t]*\"([^\"]+)\""
+		]
+	],
+	"MOC_INCLUDES" : 
+	[
+		"/Users/suf/options-pricing-calculator/include",
+		"/usr/local/opt/qt@6/lib/QtWidgets.framework/Headers",
+		"/usr/local/opt/qt@6/lib/QtWidgets.framework",
+		"/usr/local/opt/qt@6/lib/QtCore.framework/Headers",
+		"/usr/local/opt/qt@6/lib/QtCore.framework",
+		"/usr/local/opt/qt@6/share/qt/mkspecs/macx-clang",
+		"/usr/local/opt/qt@6/include",
+		"/usr/local/opt/qt@6/lib/QtGui.framework/Headers",
+		"/usr/local/opt/qt@6/lib/QtGui.framework",
+		"/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1",
+		"/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include",
+		"/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include",
+		"/Library/Developer/CommandLineTools/usr/include"
+	],
+	"MOC_MACRO_NAMES" : 
+	[
+		"Q_OBJECT",
+		"Q_GADGET",
+		"Q_NAMESPACE",
+		"Q_NAMESPACE_EXPORT",
+		"Q_GADGET_EXPORT",
+		"Q_ENUM_NS"
+	],
+	"MOC_OPTIONS" : [],
+	"MOC_PATH_PREFIX" : false,
+	"MOC_PREDEFS_CMD" : 
+	[
+		"/Library/Developer/CommandLineTools/usr/bin/c++",
+		"-std=c++17",
+		"-dM",
+		"-E",
+		"-c",
+		"/Applications/CLion.app/Contents/bin/cmake/mac/x64/share/cmake-3.29/Modules/CMakeCXXCompilerABI.cpp"
+	],
+	"MOC_PREDEFS_FILE" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/options_pricer_gui_autogen/moc_predefs.h",
+	"MOC_RELAXED_MODE" : false,
+	"MOC_SKIP" : 
+	[
+		"/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/moc_main_window.cpp",
+		"/Users/suf/options-pricing-calculator/src/gui/main_window.h"
+	],
+	"MULTI_CONFIG" : false,
+	"PARALLEL" : 6,
+	"PARSE_CACHE_FILE" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/CMakeFiles/options_pricer_gui_autogen.dir/ParseCache.txt",
+	"QT_MOC_EXECUTABLE" : "/usr/local/opt/qt@6/share/qt/libexec/moc",
+	"QT_UIC_EXECUTABLE" : "/usr/local/opt/qt@6/share/qt/libexec/uic",
+	"QT_VERSION_MAJOR" : 6,
+	"QT_VERSION_MINOR" : 7,
+	"SETTINGS_FILE" : "/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/CMakeFiles/options_pricer_gui_autogen.dir/AutogenUsed.txt",
+	"SOURCES" : 
+	[
+		[ "/Users/suf/options-pricing-calculator/src/gui/main.cpp", "MU", null ],
+		[
+			"/Users/suf/options-pricing-calculator/src/gui/main_window.cpp",
+			"MU",
+			null
+		]
+	],
+	"UIC_OPTIONS" : [],
+	"UIC_SEARCH_PATHS" : [],
+	"UIC_SKIP" : 
+	[
+		"/Users/suf/options-pricing-calculator/cmake-build-debug/src/gui/moc_main_window.cpp"
+	],
+	"UIC_UI_FILES" : [],
+	"USE_BETTER_GRAPH" : false,
+	"VERBOSITY" : 0
+}

@@ -1,20 +1,17 @@
-//
-// Created by Yusufu Shehu on 18/01/2025.
-//
-
 #include "pricer/option.h"
-#include <cmath>
+#include "pricer/engine.h"
+#include "pricer/utils.h"
 #include <stdexcept>
 
 namespace pricer {
 
-Option::Option(OptionType type,
-               double strike,
-               double expiry,
-               double spot,
-               double rate,
-               double volatility,
-               double dividend)
+Option::Option(const OptionType type,
+               const double strike,
+               const double expiry,
+               const double spot,
+               const double rate,
+               const double volatility,
+               const double dividend)
     : type_(type)
     , strike_(strike)
     , expiry_(expiry)
@@ -27,114 +24,68 @@ Option::Option(OptionType type,
     validateParameters();
 }
 
-double Option::price() const {
+void Option::checkEngine() const {
     if (!engine_) {
         throw std::runtime_error("No pricing engine set");
     }
+}
+
+double Option::price() const {
+    checkEngine();
     return engine_->calculate(*this);
 }
 
 double Option::delta() const {
-    // Use finite difference method for now
-    // Will be overridden by specific pricing engines later
-    const double h = 0.01;
-    const double spot = spot_;
-
-    setSpot(spot + h);
-    double price_up = price();
-
-    setSpot(spot - h);
-    double price_down = price();
-
-    setSpot(spot);  // Reset spot price
-
-    return (price_up - price_down) / (2 * h);
+    checkEngine();
+    return engine_->calculateDelta(*this);
 }
 
 double Option::gamma() const {
-    // Use finite difference method for now
-    const double h = 0.01;
-    const double spot = spot_;
-
-    setSpot(spot + h);
-    double price_up = price();
-
-    setSpot(spot - h);
-    double price_down = price();
-
-    setSpot(spot);
-    double price_mid = price();
-
-    return (price_up - 2 * price_mid + price_down) / (h * h);
+    checkEngine();
+    return engine_->calculateGamma(*this);
 }
 
 double Option::theta() const {
-    // Implement basic finite difference
-    // Will be overridden by specific pricing engines
-    const double h = 1.0 / 365.0;  // One day
-    const double expiry = expiry_;
-
-    double original_price = price();
-    expiry_ -= h;
-    double new_price = price();
-    expiry_ = expiry;  // Reset expiry
-
-    return -(new_price - original_price) / h;
+    checkEngine();
+    return engine_->calculateTheta(*this);
 }
 
 double Option::vega() const {
-    // Use finite difference method
-    const double h = 0.0001;
-    const double vol = volatility_;
-
-    setVolatility(vol + h);
-    double price_up = price();
-
-    setVolatility(vol - h);
-    double price_down = price();
-
-    setVolatility(vol);  // Reset volatility
-
-    return (price_up - price_down) / (2 * h);
+    checkEngine();
+    return engine_->calculateVega(*this);
 }
 
 double Option::rho() const {
-    // Use finite difference method
-    const double h = 0.0001;
-    const double rate = rate_;
-
-    setRate(rate + h);
-    double price_up = price();
-
-    setRate(rate - h);
-    double price_down = price();
-
-    setRate(rate);  // Reset rate
-
-    return (price_up - price_down) / (2 * h);
+    checkEngine();
+    return engine_->calculateRho(*this);
 }
 
 void Option::setPricingEngine(std::shared_ptr<PricingEngine> engine) {
-    engine_ = engine;
+    engine_ = std::move(engine);
 }
 
-void Option::setSpot(double spot) {
+void Option::setSpot(const double spot) {
     spot_ = spot;
     validateParameters();
 }
 
-void Option::setRate(double rate) {
+void Option::setRate(const double rate) {
     rate_ = rate;
     validateParameters();
 }
 
-void Option::setVolatility(double volatility) {
+void Option::setVolatility(const double volatility) {
     volatility_ = volatility;
     validateParameters();
 }
 
-void Option::setDividend(double dividend) {
+void Option::setDividend(const double dividend) {
     dividend_ = dividend;
+    validateParameters();
+}
+
+void Option::setExpiry(const double expiry) {
+    expiry_ = expiry;
     validateParameters();
 }
 
@@ -157,10 +108,7 @@ void Option::validateParameters() const {
 }
 
 double AmericanOption::price() const {
-    if (!engine_) {
-        throw std::runtime_error("No pricing engine set");
-    }
-    // The pricing engine will need to handle American options differently
+    checkEngine();
     return engine_->calculate(*this);
 }
 
