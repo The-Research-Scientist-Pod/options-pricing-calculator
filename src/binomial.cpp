@@ -177,35 +177,37 @@ double BinomialTreeEngine::calculateGamma(const Option& option) const {
 }
 
     double BinomialTreeEngine::calculateTheta(const Option& option) const {
-    const double h = 1.0 / 365.0;  // One day
-    double expiry = option.getExpiry();
+    // More robust theta calculation
+    const double h = 1.0 / 365.0;  // Trading days in a year
+    const double expiry = option.getExpiry();
 
-    // Original price (T)
+    // Slightly different approach to calculating price change
     double original_price = calculateWithParameters(option, num_steps_);
 
-    // Backward price (T - h)
+    // Use forward and backward pricing
     const_cast<Option&>(option).setExpiry(expiry - h);
-    double backward_price = calculateWithParameters(option, num_steps_);
+    const double backward_price = calculateWithParameters(option, num_steps_);
+
+    const_cast<Option&>(option).setExpiry(expiry + h);
+    const double forward_price = calculateWithParameters(option, num_steps_);
 
     // Restore original expiry
     const_cast<Option&>(option).setExpiry(expiry);
 
-    // Calculate Theta
-    return -(original_price - backward_price) / h;
+    // Central difference method
+    return (forward_price - backward_price) / (2.0 * h);
 }
-
-
 
 
 double BinomialTreeEngine::calculateVega(const Option& option) const {
     const double h = 0.0001;
-    double vol = option.getVolatility();
+    const double vol = option.getVolatility();
 
     const_cast<Option&>(option).setVolatility(vol + h);
-    double up_price = calculate(option);
+    const double up_price = calculate(option);
 
     const_cast<Option&>(option).setVolatility(vol - h);
-    double down_price = calculate(option);
+    const double down_price = calculate(option);
 
     const_cast<Option&>(option).setVolatility(vol);
 

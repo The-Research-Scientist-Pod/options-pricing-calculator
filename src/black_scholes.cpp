@@ -26,43 +26,43 @@ namespace pricer {
         const double sigma = option.getVolatility();
         const double q = option.getDividend();
 
-        //std::cout << "\nBlack-Scholes Calculation:" << std::endl;
-        //std::cout << "=========================" << std::endl;
-        //debugPrint("Spot (S)", S);
-        //debugPrint("Strike (K)", K);
-        //debugPrint("Time (T)", T);
-        //debugPrint("Rate (r)", r);
-        //debugPrint("Volatility (σ)", sigma);
-        //debugPrint("Dividend (q)", q);
+        std::cout << "\nBlack-Scholes Calculation:" << std::endl;
+        std::cout << "=========================" << std::endl;
+        debugPrint("Spot (S)", S);
+        debugPrint("Strike (K)", K);
+        debugPrint("Time (T)", T);
+        debugPrint("Rate (r)", r);
+        debugPrint("Volatility (σ)", sigma);
+        debugPrint("Dividend (q)", q);
 
         // Calculate d1 and d2
         const double d1 = calculateD1(S, K, r, q, sigma, T);
         const double d2 = calculateD2(d1, sigma, T);
 
-        //debugPrint("d1", d1);
-        //debugPrint("d2", d2);
-        //debugPrint("N(d1)", normalCDF(d1));
-        //debugPrint("N(d2)", normalCDF(d2));
-        //debugPrint("n(d1)", normalPDF(d1));
-        //debugPrint("n(d2)", normalPDF(d2));
+        debugPrint("d1", d1);
+        debugPrint("d2", d2);
+        debugPrint("N(d1)", normalCDF(d1));
+        debugPrint("N(d2)", normalCDF(d2));
+        debugPrint("n(d1)", normalPDF(d1));
+        debugPrint("n(d2)", normalPDF(d2));
 
         double price;
         if (option.getType() == OptionType::Call) {
             const double term1 = S * std::exp(-q * T) * normalCDF(d1);
             const double term2 = K * std::exp(-r * T) * normalCDF(d2);
-            //debugPrint("Call Option Term 1", term1);
-            //debugPrint("Call Option Term 2", term2);
+            debugPrint("Call Option Term 1", term1);
+            debugPrint("Call Option Term 2", term2);
             price = term1 - term2;
         } else {  // Put option
             const double term1 = K * std::exp(-r * T) * normalCDF(-d2);
             const double term2 = S * std::exp(-q * T) * normalCDF(-d1);
-            //debugPrint("Put Option Term 1", term1);
-            //debugPrint("Put Option Term 2", term2);
+            debugPrint("Put Option Term 1", term1);
+            debugPrint("Put Option Term 2", term2);
             price = term1 - term2;
         }
 
-        //debugPrint("Final Price", price);
-        //std::cout << "=========================\n" << std::endl;
+        debugPrint("Final Price", price);
+        std::cout << "=========================\n" << std::endl;
         return price;
     }
 
