@@ -14,7 +14,7 @@ protected:
     }
 
     // Helper function to create a standard European call option
-    std::unique_ptr<pricer::Option> makeEuropeanCall() {
+    static std::unique_ptr<pricer::Option> makeEuropeanCall() {
         return std::make_unique<pricer::EuropeanOption>(
             pricer::OptionType::Call,
             100.0,  // Strike
@@ -27,7 +27,7 @@ protected:
     }
 
     // Helper function to create a standard European put option
-    std::unique_ptr<pricer::Option> makeEuropeanPut() {
+    static std::unique_ptr<pricer::Option> makeEuropeanPut() {
         return std::make_unique<pricer::EuropeanOption>(
             pricer::OptionType::Put,
             100.0,  // Strike
@@ -40,7 +40,7 @@ protected:
     }
 
     // Helper function to create an American put option
-    std::unique_ptr<pricer::Option> makeAmericanPut() {
+    static std::unique_ptr<pricer::Option> makeAmericanPut() {
         return std::make_unique<pricer::AmericanOption>(
             pricer::OptionType::Put,
             100.0,  // Strike
@@ -137,17 +137,17 @@ TEST_F(BinomialTreeTest, AmericanPutPremium) {
 
 // Test Greeks calculation
 TEST_F(BinomialTreeTest, Greeks) {
-    auto option = makeEuropeanCall();
+    const auto option = makeEuropeanCall();
 
     option->setPricingEngine(bs_engine);
-    double bs_delta = option->delta();
-    double bs_gamma = option->gamma();
-    double bs_theta = option->theta();
+    const double bs_delta = option->delta();
+    const double bs_gamma = option->gamma();
+    const double bs_theta = option->theta();
 
     option->setPricingEngine(bin_engine);
-    double bin_delta = option->delta();
-    double bin_gamma = option->gamma();
-    double bin_theta = option->theta();
+    const double bin_delta = option->delta();
+    const double bin_gamma = option->gamma();
+    const double bin_theta = option->theta();
 
     EXPECT_NEAR(bin_delta, bs_delta, tolerance);
     EXPECT_NEAR(bin_gamma, bs_gamma, tolerance);
@@ -156,7 +156,7 @@ TEST_F(BinomialTreeTest, Greeks) {
 
 // Test put-call parity for European options
 TEST_F(BinomialTreeTest, PutCallParity) {
-    auto call = makeEuropeanCall();
+    const auto call = makeEuropeanCall();
     auto put = makeEuropeanPut();
 
     call->setPricingEngine(bin_engine);

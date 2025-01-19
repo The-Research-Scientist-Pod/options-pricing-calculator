@@ -7,7 +7,7 @@
 #include <future>
 #include <numeric>
 #include <random>
-
+#include <iostream>
 namespace pricer {
 
 MonteCarloEngine::MonteCarloEngine(size_t num_paths, size_t num_steps,
@@ -30,15 +30,14 @@ double MonteCarloEngine::calculate(const Option& option) const {
     size_t paths_per_thread = num_paths_ / num_threads_;
     std::vector<std::future<std::pair<double, double>>> futures;
 
-    // Launch simulation threads
     futures.reserve(num_threads_);
-for (size_t i = 0; i < num_threads_; ++i) {
+    for (size_t i = 0; i < num_threads_; ++i) {
         futures.push_back(
             std::async(std::launch::async,
                       &MonteCarloEngine::simulateBatch,
                       this,
                       std::ref(option),
-                      static_cast<unsigned int>(i),  // Seed
+                      static_cast<unsigned int>(i),
                       paths_per_thread)
         );
     }
@@ -46,18 +45,25 @@ for (size_t i = 0; i < num_threads_; ++i) {
     // Collect results
     double sum_payoffs = 0.0;
     double sum_squared_payoffs = 0.0;
-
     for (auto& future : futures) {
         auto result = future.get();
         sum_payoffs += result.first;
         sum_squared_payoffs += result.second;
     }
 
-    // Calculate mean and standard error
+    // Calculate mean, variance, and standard error
     const double total_paths = paths_per_thread * num_threads_;
     const double mean = sum_payoffs / total_paths;
     const double variance = (sum_squared_payoffs / total_paths - mean * mean);
     const double stderr = std::sqrt(variance / total_paths);
+
+    // Debug statements
+    std::cout << "Debug: Total Paths: " << total_paths << std::endl;
+    std::cout << "Debug: Sum of Payoffs: " << sum_payoffs << std::endl;
+    std::cout << "Debug: Sum of Squared Payoffs: " << sum_squared_payoffs << std::endl;
+    std::cout << "Debug: Mean: " << mean << std::endl;
+    std::cout << "Debug: Variance: " << variance << std::endl;
+    std::cout << "Debug: Standard Error: " << stderr << std::endl;
 
     // Store statistics for confidence interval
     last_mean_ = mean;
@@ -66,6 +72,8 @@ for (size_t i = 0; i < num_threads_; ++i) {
     // Discount to present value
     return mean * std::exp(-option.getRate() * option.getExpiry());
 }
+
+
 
 std::vector<double> MonteCarloEngine::generatePath(
     const Option& option,
@@ -140,12 +148,21 @@ std::pair<double, double> MonteCarloEngine::simulateBatch(
     return {sum_payoffs, sum_squared_payoffs};
 }
 
-std::pair<double, double> MonteCarloEngine::getConfidenceInterval() const {
+    std::pair<double, double> MonteCarloEngine::getConfidenceInterval(const Option& option) const {
     // 95% confidence interval (1.96 standard errors)
     constexpr double z_score = 1.96;
     double margin = z_score * last_stderr_;
-    return {last_mean_ - margin, last_mean_ + margin};
+
+    // Discount factor
+    const double discount = std::exp(-option.getRate() * option.getExpiry());
+
+    // Apply discounting to the mean and margin
+    double discounted_mean = last_mean_ * discount;
+    double discounted_margin = margin * discount;
+
+    return {discounted_mean - discounted_margin, discounted_mean + discounted_margin};
 }
+
 
 double MonteCarloEngine::calculateDelta(const Option& option) const {
     // Use finite difference approximation
@@ -188,18 +205,24 @@ double MonteCarloEngine::calculateGamma(const Option& option) const {
     return (up_price - 2.0 * center_price + down_price) / (h * h);
 }
 
-double MonteCarloEngine::calculateTheta(const Option& option) const {
+    double MonteCarloEngine::calculateTheta(const Option& option) const {
     const double h = 1.0 / 365.0;  // One day
     double expiry = option.getExpiry();
 
+    // Backup the original expiry value
+    const_cast<Option&>(option).setExpiry(expiry + h);
+    double price_plus_h = calculate(option);
+
     const_cast<Option&>(option).setExpiry(expiry - h);
-    double new_price = calculate(option);
+    double price_minus_h = calculate(option);
 
+    // Restore the original expiry value
     const_cast<Option&>(option).setExpiry(expiry);
-    double original_price = calculate(option);
 
-    return -(original_price - new_price) / h;
+    // Central difference formula
+    return -(price_plus_h - price_minus_h) / (2.0 * h);
 }
+
 
 double MonteCarloEngine::calculateVega(const Option& option) const {
     const double h = 0.0001;

@@ -101,12 +101,12 @@ private:
      * @param node Node number at that step
      * @return Index in flattened array
      */
-    [[nodiscard]] size_t getIndex(size_t step, size_t node) const;
+    [[nodiscard]] static size_t getIndex(size_t step, size_t node);
 };
 
 // Factory function
 inline std::shared_ptr<PricingEngine> makeBinomialTreeEngine(
-    size_t num_steps = 100,
+    size_t num_steps = 1000,
     bool use_bbs = true) {
     return std::make_shared<BinomialTreeEngine>(num_steps, use_bbs);
 }

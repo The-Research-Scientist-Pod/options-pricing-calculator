@@ -1,5 +1,7 @@
 #include "pricer/binomial.h"
 #include <cmath>
+#include <iostream>
+#include <ostream>
 #include <stdexcept>
 
 namespace pricer {
@@ -24,15 +26,15 @@ double BinomialTreeEngine::calculate(const Option& option) const {
 
 double BinomialTreeEngine::calculateWithParameters(const Option& option, size_t steps) const {
     // Store original number of steps
-    size_t original_steps = num_steps_;
+    const size_t original_steps = num_steps_;
     const_cast<BinomialTreeEngine*>(this)->num_steps_ = steps;
 
     // Build price tree
-    auto price_tree = buildPriceTree(option);
+    const auto price_tree = buildPriceTree(option);
 
     // Calculate option values
-    bool is_american = dynamic_cast<const AmericanOption*>(&option) != nullptr;
-    auto option_values = calculateOptionValues(option, price_tree, is_american);
+    const bool is_american = dynamic_cast<const AmericanOption*>(&option) != nullptr;
+    const auto option_values = calculateOptionValues(option, price_tree, is_american);
 
     // Restore original number of steps
     const_cast<BinomialTreeEngine*>(this)->num_steps_ = original_steps;
@@ -129,9 +131,8 @@ double BinomialTreeEngine::applyBBSExtrapolation(
 
 double BinomialTreeEngine::calculatePayoff(
     const Option& option,
-    double spot_price) {
-
-    double strike = option.getStrike();
+    const double spot_price) {
+    const double strike = option.getStrike();
 
     if (option.getType() == OptionType::Call) {
         return std::max(spot_price - strike, 0.0);
@@ -140,7 +141,7 @@ double BinomialTreeEngine::calculatePayoff(
     }
 }
 
-size_t BinomialTreeEngine::getIndex(size_t step, size_t node) const {
+size_t BinomialTreeEngine::getIndex(size_t step, size_t node) {
     return (step * (step + 1)) / 2 + node;
 }
 
@@ -175,18 +176,26 @@ double BinomialTreeEngine::calculateGamma(const Option& option) const {
     return (up_price - 2.0 * mid_price + down_price) / (h * h);
 }
 
-double BinomialTreeEngine::calculateTheta(const Option& option) const {
+    double BinomialTreeEngine::calculateTheta(const Option& option) const {
     const double h = 1.0 / 365.0;  // One day
     double expiry = option.getExpiry();
 
+    // Original price (T)
+    double original_price = calculateWithParameters(option, num_steps_);
+
+    // Backward price (T - h)
     const_cast<Option&>(option).setExpiry(expiry - h);
-    double new_price = calculate(option);
+    double backward_price = calculateWithParameters(option, num_steps_);
 
+    // Restore original expiry
     const_cast<Option&>(option).setExpiry(expiry);
-    double original_price = calculate(option);
 
-    return -(original_price - new_price) / h;
+    // Calculate Theta
+    return -(original_price - backward_price) / h;
 }
+
+
+
 
 double BinomialTreeEngine::calculateVega(const Option& option) const {
     const double h = 0.0001;

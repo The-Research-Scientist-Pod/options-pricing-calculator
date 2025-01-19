@@ -304,9 +304,9 @@ void MainWindow::displayResults(const pricer::Option& option) {
 
     // If Monte Carlo, add confidence interval
     if (auto* mc_engine = dynamic_cast<const pricer::MonteCarloEngine*>(option.getEngine())) {
-        auto ci = mc_engine->getConfidenceInterval();
-        addRow("95% CI Lower", ci.first);
-        addRow("95% CI Upper", ci.second);
+        auto [fst, snd] = mc_engine->getConfidenceInterval(option);
+        addRow("95% CI Lower", fst);
+        addRow("95% CI Upper", snd);
     }
 
     resultsTable_->resizeColumnsToContents();

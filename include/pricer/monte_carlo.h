@@ -47,7 +47,7 @@ public:
     void setUseAntithetic(bool use) { use_antithetic_ = use; }
     void setNumThreads(size_t threads) { num_threads_ = threads; }
 
-    std::pair<double, double> getConfidenceInterval() const;
+    std::pair<double, double> getConfidenceInterval(const Option& option) const;
 
 private:
     size_t num_paths_;

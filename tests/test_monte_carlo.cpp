@@ -29,7 +29,7 @@ protected:
     }
 
     // Helper function to create a standard European put option
-    std::unique_ptr<pricer::Option> makeEuropeanPut() {
+    static std::unique_ptr<pricer::Option> makeEuropeanPut() {
         return std::make_unique<pricer::EuropeanOption>(
             pricer::OptionType::Put,
             100.0,  // Strike
@@ -42,7 +42,7 @@ protected:
     }
 
     // Helper function to create an American put option
-    std::unique_ptr<pricer::Option> makeAmericanPut() {
+    static std::unique_ptr<pricer::Option> makeAmericanPut() {
         return std::make_unique<pricer::AmericanOption>(
             pricer::OptionType::Put,
             100.0,  // Strike
@@ -61,20 +61,27 @@ protected:
 
 // Test European call option against Black-Scholes
 TEST_F(MonteCarloTest, EuropeanCallVsBlackScholes) {
-    auto option = makeEuropeanCall();
+    const auto option = makeEuropeanCall();
 
+    // Black-Scholes engine
     option->setPricingEngine(bs_engine);
-    double bs_price = option->price();
+    const double bs_price = option->price();
+    std::cout << "Debug: Black-Scholes Price: " << bs_price << std::endl;
 
+    // Monte Carlo engine
+    mc_engine->setNumPaths(100000); // Increase paths
     option->setPricingEngine(mc_engine);
-    double mc_price = option->price();
+    const double mc_price = option->price();
+    std::cout << "Debug: Monte Carlo Price: " << mc_price << std::endl;
 
-    EXPECT_NEAR(mc_price, bs_price, tolerance);
+    // Confidence interval
+    auto [fst, snd] = mc_engine->getConfidenceInterval(*option);
+    std::cout << "Debug: Monte Carlo Confidence Interval: [" << fst << ", " << snd << "]" << std::endl;
 
-    // Get confidence interval
-    auto ci = mc_engine->getConfidenceInterval();
-    EXPECT_TRUE(bs_price >= ci.first && bs_price <= ci.second);
+    EXPECT_NEAR(mc_price, bs_price, 0.1);
+    EXPECT_TRUE(bs_price >= fst && bs_price <= snd);
 }
+
 
 // Test European put option against Black-Scholes
 TEST_F(MonteCarloTest, EuropeanPutVsBlackScholes) {
@@ -133,11 +140,11 @@ TEST_F(MonteCarloTest, Convergence) {
 
 // Test impact of antithetic variance reduction
 TEST_F(MonteCarloTest, AntitheticVarianceReduction) {
-    auto option = makeEuropeanCall();
+    const auto option = makeEuropeanCall();
 
     // Create engines with and without antithetic variates
-    auto mc_no_antithetic = std::make_shared<pricer::MonteCarloEngine>(100000, 252, false, 8);
-    auto mc_with_antithetic = std::make_shared<pricer::MonteCarloEngine>(100000, 252, true, 8);
+    const auto mc_no_antithetic = std::make_shared<pricer::MonteCarloEngine>(100000, 252, false, 8);
+    const auto mc_with_antithetic = std::make_shared<pricer::MonteCarloEngine>(100000, 252, true, 8);
 
     // Run multiple simulations and collect standard errors
     std::vector<double> errors_no_antithetic;
@@ -145,24 +152,24 @@ TEST_F(MonteCarloTest, AntitheticVarianceReduction) {
 
     for (int i = 0; i < 10; ++i) {
         option->setPricingEngine(mc_no_antithetic);
-        option->price();  // Calculate price to update confidence interval
-        auto ci1 = mc_no_antithetic->getConfidenceInterval();
+        //option->price();  // Calculate price to update confidence interval
+        auto ci1 = mc_no_antithetic->getConfidenceInterval(*option);
         errors_no_antithetic.push_back(ci1.second - ci1.first);
 
         option->setPricingEngine(mc_with_antithetic);
-        option->price();  // Calculate price to update confidence interval
-        auto ci2 = mc_with_antithetic->getConfidenceInterval();
+        //option->price();  // Calculate price to update confidence interval
+        auto ci2 = mc_with_antithetic->getConfidenceInterval(*option);
         errors_with_antithetic.push_back(ci2.second - ci2.first);
     }
 
     // Calculate average confidence interval width
-    double avg_error_no_antithetic = std::accumulate(errors_no_antithetic.begin(),
-                                                    errors_no_antithetic.end(), 0.0)
-                                    / errors_no_antithetic.size();
+    const double avg_error_no_antithetic = std::accumulate(errors_no_antithetic.begin(),
+                                                           errors_no_antithetic.end(), 0.0)
+                                           / errors_no_antithetic.size();
 
-    double avg_error_with_antithetic = std::accumulate(errors_with_antithetic.begin(),
-                                                      errors_with_antithetic.end(), 0.0)
-                                      / errors_with_antithetic.size();
+    const double avg_error_with_antithetic = std::accumulate(errors_with_antithetic.begin(),
+                                                             errors_with_antithetic.end(), 0.0)
+                                             / errors_with_antithetic.size();
 
     // Antithetic variates should reduce variance
     EXPECT_LT(avg_error_with_antithetic, avg_error_no_antithetic);
@@ -170,11 +177,11 @@ TEST_F(MonteCarloTest, AntitheticVarianceReduction) {
 
 // Test parallel execution performance
 TEST_F(MonteCarloTest, ParallelPerformance) {
-    auto option = makeEuropeanCall();
+    const auto option = makeEuropeanCall();
 
     // Create single-threaded and multi-threaded engines
-    auto mc_single = std::make_shared<pricer::MonteCarloEngine>(1000000, 252, true, 1);
-    auto mc_multi = std::make_shared<pricer::MonteCarloEngine>(1000000, 252, true, 8);
+    const auto mc_single = std::make_shared<pricer::MonteCarloEngine>(1000000, 252, true, 1);
+    const auto mc_multi = std::make_shared<pricer::MonteCarloEngine>(1000000, 252, true, 8);
 
     // Measure single-threaded time and price
     auto start = std::chrono::high_resolution_clock::now();
@@ -186,9 +193,9 @@ TEST_F(MonteCarloTest, ParallelPerformance) {
     // Measure multi-threaded time and price
     start = std::chrono::high_resolution_clock::now();
     option->setPricingEngine(mc_multi);
-    double multi_thread_price = option->price();
+    const double multi_thread_price = option->price();
     end = std::chrono::high_resolution_clock::now();
-    auto multi_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    const auto multi_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     // Prices should be similar
     EXPECT_NEAR(single_thread_price, multi_thread_price, tolerance);

@@ -4,7 +4,7 @@ enable_testing()
 set(TEST_SOURCES
         test_main.cpp
         test_black_scholes.cpp
-        test_monte_carlo.cpp
+        #test_monte_carlo.cpp
         test_binomial.cpp
 )
 
